@@ -92,7 +92,7 @@ openclaw gateway restart
 
 ### 项目链接
 
-- 飞书文档：https://feishu.cn/docx/WWDedlFy5onNdGxCyfAcbqLEnFH
+- 飞书文档：[https://feishu.cn/docx/WWDedlFy5onNdGxCyfAcbqLEnFH](https://jcn0eqeifyvi.feishu.cn/base/WZt7b8OQUa8TewsYi6EceTrUnOe?table=tblkC3LjMcVJarzt&view=vewNwadPsB)
 - GitHub：https://github.com/seeyouintokyo/axing-wechat-accounting
 
 ### 作者
@@ -193,7 +193,7 @@ Match based on keywords:
 
 ### Links
 
-- Feishu Doc: https://feishu.cn/docx/WWDedlFy5onNdGxCyfAcbqLEnFH
+- Feishu Doc: [https://feishu.cn/docx/WWDedlFy5onNdGxCyfAcbqLEnFH](https://jcn0eqeifyvi.feishu.cn/base/WZt7b8OQUa8TewsYi6EceTrUnOe?table=tblkC3LjMcVJarzt&view=vewNwadPsB)
 - GitHub: https://github.com/seeyouintokyo/axing-wechat-accounting
 
 ### Author
