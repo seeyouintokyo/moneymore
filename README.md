@@ -6,20 +6,18 @@
 
 ## 中文
 
-一键搭建微信记账助手，实现微信消息自动记账到飞书多维表格。
+### 项目背景
 
-### 功能特点
+这是一个 **OpenClaw Skill（技能）**，必须配合 OpenClaw 使用。通过 OpenClaw 接收微信消息，AI 自动解析后写入飞书多维表格，实现「说一句就记账」的零代码方案。
 
-- ✅ **零代码配置**：全程自然语言交互，无需编程
-- ✅ **自动安装**：自动检测并安装微信插件
-- ✅ **智能识别**：AI 自动解析金额、分类、类型
-- ✅ **多笔支持**：一句话记多笔（如"鼠标98，椰子水10块"）
-- ✅ **中文数字**：支持中文数字（八十多、二十五块）
-- ✅ **语音支持**：支持语音转文字记账
-- ✅ **图片识别**：自动识别账单截图
-- ✅ **月末报表**：自动生成月度收支统计
-- ✅ **预算提醒**：超支或接近预算时自动提醒
-- ✅ **即时反馈**：记账成功后立即回复确认
+### 核心能力
+
+- **双引擎解析**：规则引擎（快速）+ AI 兜底（智能），自动选择最优方案
+- **中文数字**：支持「八十多」「二十五块」等中文表达
+- **多笔记录**：一句话记多笔，如「鼠标98，椰子水10块」
+- **智能分类**：自动匹配餐饮/交通/购物等8大分类
+- **月末报表**：自动生成月度收支统计
+- **预算提醒**：超支时自动预警
 
 ### 快速开始
 
@@ -41,63 +39,66 @@ openclaw channels login --channel openclaw-weixin
 
 # 3. 重启 Gateway
 openclaw gateway restart
+
+# 4. 创建飞书多维表格
+# 字段：日期、类型（支出/收入）、金额、分类、备注、来源
+
+# 5. （可选）配置 AI 兜底
+# 编辑 scripts/ai_parse_accounting.py，接入 OpenAI/Claude/Kimi API
 ```
 
 ### 使用示例
 
 在微信里发送：
 
-| 消息 | 自动识别为 |
-|------|-----------|
+| 消息 | 识别结果 |
+|------|---------|
 | 午餐 35 | 支出 35元 餐饮 |
 | 打车 20 | 支出 20元 交通 |
 | 收入 5000 工资 | 收入 5000元 其他 |
 | 火锅人均八十多 | 支出 80元 餐饮 |
 | 鼠标98，椰子水10块 | 支出 98元 购物 + 支出 10元 餐饮 |
 
+### AI 兜底说明
+
+**默认使用规则引擎**，无需配置 API 即可使用。
+
+如需启用 AI 兜底（提升复杂表达识别率）：
+1. 编辑 `scripts/ai_parse_accounting.py`
+2. 在 `call_llm_parse()` 函数中接入你的 LLM API
+3. 支持 OpenAI、Claude、Kimi 等任意模型
+
+示例配置：
+```python
+def call_llm_parse(text):
+    import openai
+    openai.api_key = "your-api-key"
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": text}]
+    )
+    return json.loads(response.choices[0].message.content)
+```
+
 ### 技术架构
 
 ```
-微信消息 → OpenClaw AI 解析 → 飞书多维表格
+微信消息 → OpenClaw → 规则引擎 → 低置信度? → AI兜底 → 飞书表格
+                ↓ 高置信度
+            直接写入
 ```
 
-### 配置说明
-
-#### 飞书多维表格字段
-
-- **日期**：自动记录当天日期
-- **类型**：单选（支出/收入）
-- **金额**：数字类型
-- **分类**：单选（餐饮/交通/购物/娱乐/通讯/居住/医疗/其他）
-- **备注**：用户原始消息
-- **来源**：微信用户ID
-
-#### 自动分类规则
-
-根据关键词自动匹配：
-- 餐饮：吃饭、午餐、晚餐、奶茶、咖啡、火锅
-- 交通：打车、地铁、公交、加油
-- 购物：买东西、淘宝、京东、超市
-- 娱乐：电影、游戏、KTV、旅游
-- 通讯：话费、流量、宽带
-- 居住：房租、水电、物业
-- 医疗：医院、看病、药
-- 其他：未匹配到的分类
-
-### 依赖要求
+### 依赖
 
 - OpenClaw >= 2026.3.22
 - 微信版本 >= 8.0.70
 - 飞书应用权限：bitable:app, base:app:create
+- （可选）LLM API Key
 
-### 项目链接
+### 链接
 
+- GitHub：https://github.com/seeyouintokyo/moneymore
 - 飞书文档：https://feishu.cn/docx/WWDedlFy5onNdGxCyfAcbqLEnFH
-- GitHub：https://github.com/seeyouintokyo/axing-wechat-accounting
-
-### 作者
-
-阿星 (Axing)
 
 ### 许可证
 
@@ -107,20 +108,18 @@ MIT License
 
 ## English
 
-One-click setup for WeChat accounting assistant, automatically record WeChat messages to Feishu Bitable.
+### Project Background
 
-### Features
+This is an **OpenClaw Skill** that works with OpenClaw. It receives WeChat messages through OpenClaw, AI parses them automatically, and writes to Feishu Bitable for zero-code accounting.
 
-- ✅ **Zero-code configuration**: Natural language interaction, no programming required
-- ✅ **Auto-installation**: Automatically detect and install WeChat plugin
-- ✅ **Smart recognition**: AI automatically parses amount, category, and type
-- ✅ **Multi-record support**: Record multiple items in one message (e.g., "mouse 98, coconut water 10")
-- ✅ **Chinese numbers**: Support Chinese numerals (e.g., "eighty", "twenty-five")
-- ✅ **Voice support**: Support voice-to-text accounting
-- ✅ **Image recognition**: Automatically recognize bill screenshots
-- ✅ **Monthly report**: Auto-generate monthly income/expense statistics
-- ✅ **Budget alerts**: Alert when over budget or approaching limit
-- ✅ **Instant feedback**: Reply confirmation immediately after recording
+### Core Capabilities
+
+- **Dual-engine parsing**: Rule engine (fast) + AI fallback (smart), auto-selects optimal solution
+- **Chinese numerals**: Supports expressions like "eighty" and "twenty-five"
+- **Multi-record**: Record multiple items in one sentence, e.g., "mouse 98, coconut water 10"
+- **Smart categorization**: Auto-matches 8 categories (Dining/Transport/Shopping/etc.)
+- **Monthly report**: Auto-generates monthly statistics
+- **Budget alerts**: Alerts when over budget
 
 ### Quick Start
 
@@ -142,63 +141,66 @@ openclaw channels login --channel openclaw-weixin
 
 # 3. Restart Gateway
 openclaw gateway restart
+
+# 4. Create Feishu Bitable
+# Fields: Date, Type (Expense/Income), Amount, Category, Note, Source
+
+# 5. (Optional) Configure AI fallback
+# Edit scripts/ai_parse_accounting.py, connect your LLM API
 ```
 
 ### Usage Examples
 
 Send messages in WeChat:
 
-| Message | Auto-recognized as |
-|------|-----------|
+| Message | Recognized as |
+|------|---------|
 | Lunch 35 | Expense 35 CNY Dining |
 | Taxi 20 | Expense 20 CNY Transport |
 | Income 5000 salary | Income 5000 CNY Other |
 | Hot pot average eighty | Expense 80 CNY Dining |
 | Mouse 98, coconut water 10 | Expense 98 CNY Shopping + Expense 10 CNY Dining |
 
-### Technical Architecture
+### AI Fallback
+
+**Uses rule engine by default**, no API configuration needed.
+
+To enable AI fallback (improves complex expression recognition):
+1. Edit `scripts/ai_parse_accounting.py`
+2. Connect your LLM API in `call_llm_parse()` function
+3. Supports OpenAI, Claude, Kimi, etc.
+
+Example configuration:
+```python
+def call_llm_parse(text):
+    import openai
+    openai.api_key = "your-api-key"
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": text}]
+    )
+    return json.loads(response.choices[0].message.content)
+```
+
+### Architecture
 
 ```
-WeChat Message → OpenClaw AI Parsing → Feishu Bitable
+WeChat → OpenClaw → Rule Engine → Low confidence? → AI Fallback → Feishu
+              ↓ High confidence
+          Direct write
 ```
 
-### Configuration
-
-#### Feishu Bitable Fields
-
-- **Date**: Auto-record current date
-- **Type**: Single select (Expense/Income)
-- **Amount**: Number
-- **Category**: Single select (Dining/Transport/Shopping/Entertainment/Communication/Housing/Medical/Other)
-- **Note**: Original user message
-- **Source**: WeChat user ID
-
-#### Auto-categorization Rules
-
-Match based on keywords:
-- Dining: eat, lunch, dinner, milk tea, coffee, hot pot
-- Transport: taxi, subway, bus, gas
-- Shopping: buy, Taobao, JD, supermarket
-- Entertainment: movie, game, KTV, travel
-- Communication: phone bill, data, broadband
-- Housing: rent, utilities, property
-- Medical: hospital, doctor, medicine
-- Other: Uncategorized
-
-### Requirements
+### Dependencies
 
 - OpenClaw >= 2026.3.22
 - WeChat version >= 8.0.70
 - Feishu permissions: bitable:app, base:app:create
+- (Optional) LLM API Key
 
 ### Links
 
+- GitHub: https://github.com/seeyouintokyo/moneymore
 - Feishu Doc: https://feishu.cn/docx/WWDedlFy5onNdGxCyfAcbqLEnFH
-- GitHub: https://github.com/seeyouintokyo/axing-wechat-accounting
-
-### Author
-
-Axing (阿星)
 
 ### License
 
