@@ -1,213 +1,218 @@
 ---
-name: wechat-accounting
-description: 一键搭建微信记账助手。支持微信消息自动记账、月末报表推送、预算超支提醒。自动安装微信插件、配置登录、创建飞书多维表格。支持阿拉伯数字和中文数字（如"八十多"、"二十五块"）。当用户说"我想记账"、"微信记账"、"搭建记账助手"时触发此技能。
+name: axing-wechat-accounting
+description: |
+  阿星微信记账助手 - 一键搭建微信自动记账系统。
+  Axing WeChat Accounting - One-click setup for WeChat auto-accounting.
+  
+  支持功能 / Features:
+  - 微信消息自动记账 / Auto-record from WeChat messages
+  - 支持中文数字和阿拉伯数字 / Support Chinese and Arabic numerals
+  - 支持多笔记录 / Support multiple records
+  - 月末自动报表 / Monthly auto-report
+  - 预算超支提醒 / Budget overrun alerts
+  
+  触发条件 / Triggers: "我想记账", "微信记账", "I want to track expenses", "accounting assistant"
 ---
 
-# 微信记账助手 Skill
+# 阿星微信记账助手 / Axing WeChat Accounting
 
-一键完成微信记账助手的全套搭建，包括：
-- 微信插件安装、扫码登录
-- 飞书多维表格创建
-- 自动记账逻辑（支持多笔、中文数字）
-- 月末自动报表推送
-- 预算超支提醒
+[English](#english-guide) | [中文指南](#中文指南)
 
-## 功能概述
+---
 
-### 核心功能
+## 中文指南
+
+一键完成微信记账助手的全套搭建。
+
+### 功能概述 / Features
+
 1. **微信记账** - 发消息自动记录（支持多笔、中文数字）
 2. **月末报表** - 每月自动生成收支统计并推送
 3. **预算提醒** - 超支或接近预算时自动提醒
 
-### 支持的金额格式
+### 支持的金额格式 / Supported Amount Formats
+
 - 阿拉伯数字："35"、"100.5"
 - 中文数字："八十"、"二十五"、"一百多"
 - 复杂表达："人均八十多"、"花了二十五块"
 - 多笔记录："鼠标98，椰子水10块"
 
-## 执行流程
+### 执行流程 / Setup Process
 
-### Step 1: 检查并安装微信插件
+#### Step 1: 检查并安装微信插件
 
 ```bash
 openclaw plugins list | grep -i weixin
 ```
 
-如果没有安装，执行：
+如果没有安装：
 ```bash
 openclaw plugins install "@tencent-weixin/openclaw-weixin@latest"
 ```
 
-### Step 2: 配置微信登录
+#### Step 2: 配置微信登录
 
-检查是否已登录：
-```bash
-openclaw status
-```
-
-如果微信渠道未显示或状态不是 OK，执行：
 ```bash
 openclaw channels login --channel openclaw-weixin
 ```
 
-终端会显示二维码，用户需要：
-1. 用手机微信扫描二维码
-2. 在手机上确认授权
-3. 等待连接成功
+按提示扫码完成登录。
 
-### Step 3: 重启 Gateway
+#### Step 3: 重启 Gateway
 
 ```bash
 openclaw gateway restart
 ```
 
-### Step 4: 创建飞书多维表格
+#### Step 4: 创建飞书多维表格
 
-使用 `feishu_bitable_create_app` 工具创建名为「微信记账助手」的多维表格。
+创建「微信记账助手」表格，字段：
+- 日期（DateTime）
+- 类型（SingleSelect：支出/收入）
+- 金额（Number）
+- 分类（SingleSelect：餐饮/交通/购物/娱乐/通讯/居住/医疗/其他）
+- 备注（Text）
+- 来源（Text）
 
-创建字段：
-1. 日期（DateTime）
-2. 类型（SingleSelect：支出、收入）
-3. 金额（Number）
-4. 分类（SingleSelect：餐饮、交通、购物、娱乐、通讯、居住、医疗、其他）
-5. 备注（Text）
-6. 来源（Text）
+#### Step 5: 配置自动记账
 
-### Step 5: 配置自动记账逻辑
+收到微信消息时：
+1. 判断是否是记账消息
+2. 调用 `scripts/parse_accounting.py` 解析
+3. 写入飞书表格
+4. 检查预算
+5. 回复用户
 
-当收到微信消息时：
-1. 判断是否是记账消息（包含金额信息）
-2. 如果是，调用 `scripts/parse_accounting.py` 解析：
-   - 金额（支持阿拉伯数字和中文数字）
-   - 类型（支出/收入）
-   - 分类（餐饮/交通/购物等）
-   - 备注（原始消息）
-   - 支持多笔记录（如"鼠标98，椰子水10块"）
-3. 写入飞书多维表格
-4. 检查预算（如果配置了）
-5. 回复用户确认信息
-
-### Step 6: 配置月末报表（可选）
-
-设置 cron 定时任务，每月自动推送报表：
+#### Step 6: 配置月末报表（可选）
 
 ```bash
-# 每月1号早上9点推送上月报表
 openclaw cron add --name "monthly-report" --schedule "0 9 1 * *" \
-  --command "python3 ~/.openclaw/skills/wechat-accounting/scripts/monthly_report.py"
+  --command "生成并推送上月报表"
 ```
 
-### Step 7: 配置预算提醒（可选）
+#### Step 7: 配置预算提醒（可选）
 
-设置每月预算（例如 3000 元）：
+设置每月预算，每次记账后检查累计支出。
 
-在记账逻辑中，每次写入记录后：
-1. 查询当月累计支出
-2. 调用 `scripts/budget_check.py` 检查预算
-3. 如果超支或接近预算（80%），发送提醒
+---
 
-### Step 8: 测试
+## English Guide
 
-让用户在微信里发送测试消息：
-- "午餐 35"
-- "打车 20"
-- "收入 5000 工资"
-- "火锅人均八十多"
-- "买杯奶茶花了二十五块"
-- "鼠标98，椰子水10块"
+One-click setup for complete WeChat accounting assistant.
 
-## 记账消息识别规则
+### Features
 
-判断消息是否是记账消息：
-- 包含金额（阿拉伯数字或中文数字）
-- 不是纯问候（如"你好"、"在吗"）
-- 不是纯数字（可能是验证码）
+1. **WeChat Accounting** - Auto-record from messages (multi-record, Chinese numerals supported)
+2. **Monthly Report** - Auto-generate monthly statistics and push
+3. **Budget Alerts** - Alert when over budget or approaching limit
 
-## 分类映射规则
+### Supported Amount Formats
 
-根据关键词自动匹配分类：
-- 餐饮：吃饭、午餐、晚餐、早餐、奶茶、咖啡、餐厅、火锅、烧烤
-- 交通：打车、地铁、公交、滴滴、车费、加油、停车
-- 购物：买东西、淘宝、京东、拼多多、买、购物、超市
-- 娱乐：电影、游戏、KTV、唱歌、玩、娱乐、旅游
-- 通讯：话费、流量、宽带、手机费
-- 居住：房租、水电、物业、房贷、租金
-- 医疗：医院、看病、药、医保、体检
-- 其他：未匹配到的默认分类
+- Arabic numerals: "35", "100.5"
+- Chinese numerals: "八十" (eighty), "二十五" (twenty-five), "一百多" (around 100)
+- Complex expressions: "人均八十多" (average eighty), "花了二十五块" (spent twenty-five)
+- Multi-records: "mouse 98, coconut water 10"
 
-## 类型识别规则
+### Setup Process
 
-- 包含"收入"、"工资"、"收到"、"退款"、"报销" → 收入
-- 默认 → 支出
+#### Step 1: Check and Install WeChat Plugin
 
-## 回复模板
-
-### 单笔记账成功
-```
-✅ 已记录：支出 35元
-分类：餐饮
-时间：2026-04-16 12:30
-备注：午餐
+```bash
+openclaw plugins list | grep -i weixin
 ```
 
-### 多笔记账成功
-```
-✅ 已记录 2 笔消费：
-1. 鼠标 - 98元（购物）
-2. 椰子水 - 10元（餐饮）
-总计：108元
+If not installed:
+```bash
+openclaw plugins install "@tencent-weixin/openclaw-weixin@latest"
 ```
 
-### 预算提醒
-```
-⚠️ 预算超支提醒
+#### Step 2: Configure WeChat Login
 
-本月预算：3000.00 元
-已支出：3200.00 元
-超支：200.00 元
-
-建议控制消费！
+```bash
+openclaw channels login --channel openclaw-weixin
 ```
 
-### 月末报表
-```
-📊 本月记账报表
+Scan QR code to complete login.
 
-💰 收支总览
-━━━━━━━━━━━━━━━━
-收入：5000.00 元
-支出：2800.00 元
-结余：2200.00 元
+#### Step 3: Restart Gateway
 
-📈 支出分类 TOP5
-━━━━━━━━━━━━━━━━
-1. 餐饮：1200.00 元 (42.9%)
-2. 购物：800.00 元 (28.6%)
-3. 交通：400.00 元 (14.3%)
-...
-
-💡 记账小贴士：
-本月有结余，继续保持！
+```bash
+openclaw gateway restart
 ```
 
-## 错误处理
+#### Step 4: Create Feishu Bitable
 
-- 微信插件安装失败：检查网络，重试
-- 扫码登录失败：让用户重新扫码
-- 飞书表格创建失败：检查权限，提示用户手动创建
-- 写入失败：检查表格字段是否正确
-- 金额识别失败：提示用户使用阿拉伯数字
+Create "WeChat Accounting" table with fields:
+- Date (DateTime)
+- Type (SingleSelect: Expense/Income)
+- Amount (Number)
+- Category (SingleSelect: Dining/Transport/Shopping/Entertainment/Communication/Housing/Medical/Other)
+- Note (Text)
+- Source (Text)
 
-## 依赖工具
+#### Step 5: Configure Auto-Accounting
 
-- `openclaw plugins install` - 安装插件
-- `openclaw channels login` - 渠道登录
-- `openclaw gateway restart` - 重启 gateway
-- `openclaw cron` - 定时任务（月末报表）
-- `feishu_bitable_create_app` - 创建多维表格
-- `feishu_bitable_create_field` - 创建字段
-- `feishu_bitable_create_record` - 写入记录
-- `feishu_bitable_list_records` - 查询记录（预算检查、报表生成）
-- `scripts/parse_accounting.py` - 消息解析脚本
-- `scripts/monthly_report.py` - 月末报表生成
-- `scripts/budget_check.py` - 预算检查
+When receiving WeChat message:
+1. Check if it's an accounting message
+2. Call `scripts/parse_accounting.py` to parse
+3. Write to Feishu table
+4. Check budget
+5. Reply to user
+
+#### Step 6: Configure Monthly Report (Optional)
+
+```bash
+openclaw cron add --name "monthly-report" --schedule "0 9 1 * *" \
+  --command "Generate and push last month's report"
+```
+
+#### Step 7: Configure Budget Alerts (Optional)
+
+Set monthly budget, check cumulative expenses after each record.
+
+---
+
+## 技术细节 / Technical Details
+
+### 金额识别 / Amount Recognition
+
+```python
+# 阿拉伯数字 / Arabic numerals
+"35" → 35
+"100.5" → 100.5
+
+# 中文数字 / Chinese numerals
+"八十" → 80
+"二十五" → 25
+"一百多" → 100
+
+# 多笔 / Multi-records
+"鼠标98，椰子水10块" → [98, 10]
+```
+
+### 分类映射 / Category Mapping
+
+```python
+CATEGORY_KEYWORDS = {
+    "餐饮/Dining": ["吃饭/eat", "午餐/lunch", "晚餐/dinner", "火锅/hot pot"],
+    "交通/Transport": ["打车/taxi", "地铁/subway", "公交/bus"],
+    "购物/Shopping": ["买东西/buy", "淘宝/Taobao", "京东/JD"],
+    "娱乐/Entertainment": ["电影/movie", "游戏/game", "KTV"],
+    "通讯/Communication": ["话费/phone", "流量/data", "宽带/broadband"],
+    "居住/Housing": ["房租/rent", "水电/utilities", "物业/property"],
+    "医疗/Medical": ["医院/hospital", "看病/doctor", "药/medicine"],
+}
+```
+
+### 依赖工具 / Required Tools
+
+- `openclaw plugins install` - 安装插件 / Install plugin
+- `openclaw channels login` - 渠道登录 / Channel login
+- `openclaw gateway restart` - 重启 gateway / Restart gateway
+- `openclaw cron` - 定时任务 / Scheduled tasks
+- `feishu_bitable_create_app` - 创建表格 / Create table
+- `feishu_bitable_create_record` - 写入记录 / Write record
+- `feishu_bitable_list_records` - 查询记录 / Query records
+- `scripts/parse_accounting.py` - 消息解析 / Message parsing
+- `scripts/monthly_report.py` - 月末报表 / Monthly report
+- `scripts/budget_check.py` - 预算检查 / Budget check
