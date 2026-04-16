@@ -1,0 +1,33 @@
+2026-04-16 17:43:03,861 - INFO - 开始解析: '午餐 35'
+2026-04-16 17:43:03,865 - INFO - 规则解析结果: {"is_accounting": true, "type": "支出", "amount": 35.0, "category": "餐饮", "note": "午餐 35", "date": "2026-04-16", "time": "17:43", "multi_records": [], "confidence": 0.0, "source": "rule"}
+2026-04-16 17:43:03,865 - INFO - 规则解析置信度: 1.00
+2026-04-16 17:43:03,865 - INFO - 使用规则结果，置信度: 1.00
+2026-04-16 17:43:03,865 - INFO - 开始解析: '中午跟同事AA制吃了顿火锅人均八十多'
+2026-04-16 17:43:03,866 - INFO - 规则解析结果: {"is_accounting": false, "type": null, "amount": null, "category": null, "note": "中午跟同事AA制吃了顿火锅人均八十多", "date": "2026-04-16", "time": "17:43", "multi_records": [], "confidence": 0.0, "source": "rule"}
+2026-04-16 17:43:03,867 - INFO - 规则解析置信度: 0.00
+2026-04-16 17:43:03,867 - INFO - 触发 AI 兜底: 置信度低于阈值
+2026-04-16 17:43:03,867 - INFO - 调用 AI 兜底解析
+2026-04-16 17:43:03,868 - INFO - AI 解析结果: {"is_accounting": false, "need_confirmation": true, "amount": null, "type": null, "category": null, "note": "中午跟同事AA制吃了顿火锅人均八十多", "multi_records": [], "reason": "无法提取金额", "date": "2026-04-16", "time": "17:43"}
+2026-04-16 17:43:03,868 - INFO - 合并结果: {"is_accounting": false, "need_confirmation": true, "reason": "无法提取金额"}
+2026-04-16 17:43:03,868 - INFO - 开始解析: '鼠标98，椰子水10块'
+2026-04-16 17:43:03,870 - INFO - 规则解析结果: {"is_accounting": true, "type": "支出", "amount": 98.0, "category": "其他", "note": "鼠标98，椰子水10块", "date": "2026-04-16", "time": "17:43", "multi_records": [{"amount": 98.0, "category": "其他", "type": "支出", "note": "鼠标98"}, {"amount": 10.0, "category": "其他", "type": "支出", "note": "椰子水10块"}], "confidence": 0.8, "source": "rule"}
+2026-04-16 17:43:03,870 - INFO - 规则解析置信度: 0.90
+2026-04-16 17:43:03,870 - INFO - 触发 AI 兜底: 多笔记录不完整
+2026-04-16 17:43:03,870 - INFO - 调用 AI 兜底解析
+2026-04-16 17:43:03,871 - INFO - AI 解析结果: {"is_accounting": true, "need_confirmation": false, "amount": null, "type": "支出", "category": "其他", "note": "鼠标98，椰子水10块", "multi_records": [{"amount": 10.0, "type": "支出", "category": "其他", "note": "鼠标98"}, {"amount": 98.0, "type": "支出", "category": "其他", "note": "椰子水10块"}], "reason": "", "date": "2026-04-16", "time": "17:43"}
+2026-04-16 17:43:03,871 - INFO - 合并结果: {"is_accounting": true, "type": "支出", "amount": 98.0, "category": "其他", "note": "鼠标98，椰子水10块", "date": "2026-04-16", "time": "17:43", "multi_records": [{"amount": 98.0, "category": "其他", "type": "支出", "note": "鼠标98"}, {"amount": 10.0, "category": "其他", "type": "支出", "note": "椰子水10块"}], "confidence": 0.81, "source": "merged"}
+2026-04-16 17:43:03,871 - INFO - 开始解析: '今天吃了火锅'
+2026-04-16 17:43:03,871 - INFO - 规则解析结果: {"is_accounting": false, "type": null, "amount": null, "category": null, "note": "今天吃了火锅", "date": "2026-04-16", "time": "17:43", "multi_records": [], "confidence": 0.0, "source": "rule"}
+2026-04-16 17:43:03,872 - INFO - 规则解析置信度: 0.00
+2026-04-16 17:43:03,872 - INFO - 触发 AI 兜底: 置信度低于阈值
+2026-04-16 17:43:03,872 - INFO - 调用 AI 兜底解析
+2026-04-16 17:43:03,872 - INFO - AI 解析结果: {"is_accounting": false, "need_confirmation": true, "amount": null, "type": null, "category": null, "note": "今天吃了火锅", "multi_records": [], "reason": "无法提取金额", "date": "2026-04-16", "time": "17:43"}
+2026-04-16 17:43:03,872 - INFO - 合并结果: {"is_accounting": false, "need_confirmation": true, "reason": "无法提取金额"}
+2026-04-16 17:43:03,873 - INFO - 开始解析: '123456'
+2026-04-16 17:43:03,873 - INFO - 规则解析结果: {"is_accounting": false, "type": null, "amount": null, "category": null, "note": "123456", "date": "2026-04-16", "time": "17:43", "multi_records": [], "confidence": 0.0, "source": "rule"}
+2026-04-16 17:43:03,873 - INFO - 规则解析置信度: 0.00
+2026-04-16 17:43:03,873 - INFO - 触发 AI 兜底: 置信度低于阈值
+2026-04-16 17:43:03,873 - INFO - 调用 AI 兜底解析
+2026-04-16 17:43:03,873 - INFO - AI 解析结果: {"is_accounting": true, "need_confirmation": false, "amount": 123456.0, "type": "支出", "category": "其他", "note": "123456", "multi_records": [], "reason": "", "date": "2026-04-16", "time": "17:43"}
+2026-04-16 17:43:03,873 - WARNING - 类型冲突: 规则=None, AI=支出
+2026-04-16 17:43:03,874 - INFO - 合并结果: {"is_accounting": true, "type": "支出", "amount": 123456.0, "category": null, "note": "123456", "date": "2026-04-16", "time": "17:43", "multi_records": [], "confidence": 0.5, "source": "merged", "need_confirmation": true, "reason": "收支类型不确定（规则:None, AI:支出）"}

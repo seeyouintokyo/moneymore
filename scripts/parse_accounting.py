@@ -218,6 +218,8 @@ def parse_accounting_message(text):
         "date": datetime.now().strftime("%Y-%m-%d"),
         "time": datetime.now().strftime("%H:%M"),
         "multi_records": [],  # 多笔记录
+        "confidence": 0.0,    # 置信度
+        "source": "rule",     # 来源
     }
     
     # 判断是否是记账消息
@@ -270,6 +272,14 @@ def parse_accounting_message(text):
         result["amount"] = result["multi_records"][0]["amount"]
         result["category"] = result["multi_records"][0]["category"]
         result["type"] = result["multi_records"][0]["type"]
+    
+    # 计算置信度（简单版本）
+    confidence = 1.0
+    if result["category"] == "其他":
+        confidence -= 0.2
+    if not result["multi_records"] and result["amount"] is None:
+        confidence = 0.0
+    result["confidence"] = max(0.0, confidence)
     
     return result
 
