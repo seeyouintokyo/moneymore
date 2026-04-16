@@ -5,6 +5,7 @@
 ---
 
 ## 中文
+wechat：staraiwork
 
 一键搭建微信记账助手，实现微信消息自动记账到飞书多维表格。
 
@@ -102,6 +103,8 @@ openclaw gateway restart
 ### 许可证
 
 MIT License
+
+wechat：staraiwork
 
 ---
 
