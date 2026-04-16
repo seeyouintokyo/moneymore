@@ -5,6 +5,7 @@
 ---
 
 ## 中文
+[wechat：staraiwork]
 
 ### 项目背景
 
@@ -97,12 +98,23 @@ def call_llm_parse(text):
 
 ### 链接
 
+<<<<<<< HEAD
 - GitHub：https://github.com/seeyouintokyo/moneymore
 - 飞书文档：https://feishu.cn/docx/WWDedlFy5onNdGxCyfAcbqLEnFH
+=======
+- 飞书文档：[https://feishu.cn/docx/WWDedlFy5onNdGxCyfAcbqLEnFH](https://jcn0eqeifyvi.feishu.cn/base/WZt7b8OQUa8TewsYi6EceTrUnOe?table=tblkC3LjMcVJarzt&view=vewNwadPsB)
+- GitHub：https://github.com/seeyouintokyo/axing-wechat-accounting
+
+### 作者
+
+阿星 (Axing)
+>>>>>>> a412b615fbe502f249c839c3db157f00687319e2
 
 ### 许可证
 
 MIT License
+
+wechat：staraiwork
 
 ---
 
@@ -199,8 +211,17 @@ WeChat → OpenClaw → Rule Engine → Low confidence? → AI Fallback → Feis
 
 ### Links
 
+<<<<<<< HEAD
 - GitHub: https://github.com/seeyouintokyo/moneymore
 - Feishu Doc: https://feishu.cn/docx/WWDedlFy5onNdGxCyfAcbqLEnFH
+=======
+- Feishu Doc: [https://feishu.cn/docx/WWDedlFy5onNdGxCyfAcbqLEnFH](https://jcn0eqeifyvi.feishu.cn/base/WZt7b8OQUa8TewsYi6EceTrUnOe?table=tblkC3LjMcVJarzt&view=vewNwadPsB)
+- GitHub: https://github.com/seeyouintokyo/axing-wechat-accounting
+
+### Author
+
+Axing (阿星)
+>>>>>>> a412b615fbe502f249c839c3db157f00687319e2
 
 ### License
 
